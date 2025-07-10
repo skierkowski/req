@@ -30,17 +30,30 @@ const createCommands = (configFile) => {
       .command(commandName)
       .description(`Execute ${commandName} command`);
     
-    // Add parameter option if specified
-    if (commandConfig.param) {
-      command.option(`--${commandConfig.param} <value>`, `${commandConfig.param} parameter`);
+    // Add parameter options - support both new "params" array and old "param" string
+    const parameters = [];
+
+    if (commandConfig.params && Array.isArray(commandConfig.params)) {
+      parameters.push(...commandConfig.params);
+    } else if (commandConfig.param) {
+      // Backward compatibility for old "param" syntax
+      parameters.push(commandConfig.param);
     }
+
+    parameters.forEach((param) => {
+      command.option(`--${param} <value>`, `${param} parameter`);
+    });
     
     // Add action handler
     command.action(async (options) => {
       const cliParams = {};
-      if (commandConfig.param && options[commandConfig.param]) {
-        cliParams[commandConfig.param] = options[commandConfig.param];
+
+      // Collect all parameters
+      parameters.forEach((param) => {
+        if (options[param]) {
+          cliParams[param] = options[param];
       }
+      });
       
       // Get global options from parent command
       const parentOptions = command.parent.opts();
