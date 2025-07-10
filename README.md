@@ -283,42 +283,6 @@ req --config api-config.yaml command-name
 req --config ./configs/dev.yaml users --verbose
 ```
 
-## 🏗️ Development
-
-### Building from Source
-
-```bash
-# Clone the repository
-git clone https://github.com/skierkowski/req.git
-cd req
-
-# Install dependencies
-npm install
-
-# Format code
-npm run format
-
-# Run locally
-node src/index.js --help
-```
-
-### Project Structure
-
-```
-req/
-├── src/
-│   ├── commands/
-│   │   └── handler.js      # Command execution logic
-│   ├── config/
-│   │   └── loader.js       # Configuration loading
-│   ├── utils/
-│   │   ├── http.js         # HTTP request utilities
-│   │   └── templating.js   # Variable substitution
-│   └── index.js            # CLI entry point
-├── package.json
-└── README.md
-```
-
 ## 📝 License
 
 MIT License - see LICENSE file for details.
@@ -330,7 +294,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## 📞 Support
 
 - 🐛 **Issues**: [GitHub Issues](https://github.com/skierkowski/req/issues)
-- 📧 **Email**: [skierkowski@gmail.com](mailto:skierkowski@gmail.com)
 - 🐦 **Twitter**: [@skierkowski](https://twitter.com/skierkowski)
 
 ---
