@@ -6,7 +6,7 @@ export const substituteVariables = (obj, variables) => {
     // Disable HTML escaping by providing a custom escape function that returns the value unchanged
     return Mustache.render(obj, variables, {}, { escape: (value) => value });
   } else if (Array.isArray(obj)) {
-    return obj.map(item => substituteVariables(item, variables));
+    return obj.map((item) => substituteVariables(item, variables));
   } else if (typeof obj === 'object' && obj !== null) {
     const result = {};
     for (const [key, value] of Object.entries(obj)) {
@@ -21,12 +21,12 @@ export const substituteVariables = (obj, variables) => {
 export const mergeVariables = (cliParams, stageVariables = {}) => {
   // Start with environment variables
   const variables = { ...process.env };
-  
+
   // Add stage variables (they take precedence over env vars)
   Object.assign(variables, stageVariables);
-  
+
   // Add CLI parameters (they take precedence over stage vars and env vars)
   Object.assign(variables, cliParams);
-  
+
   return variables;
-}; 
+};
