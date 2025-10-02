@@ -65,8 +65,14 @@ api-status:
 # Basic usage
 req users
 
-# With parameters
+# With parameters (using options)
 req create-user --name "John Doe" --email "john@example.com"
+
+# With parameters (using positional arguments)
+req create-user "John Doe" "john@example.com"
+
+# Mixed positional and options
+req create-user "John Doe" --email "john@example.com"
 
 # Using different stages
 req api-status --stage prod
@@ -80,7 +86,7 @@ req users --verbose
 ### Command Syntax
 
 ```bash
-req [options] <command> [command-options]
+req [options] <command> [positional-args...] [command-options]
 ```
 
 ### Global Options
@@ -89,6 +95,37 @@ req [options] <command> [command-options]
 - `-v, --verbose`: Show detailed request/response information
 - `-s, --stage <name>`: Stage to use for variables (default: `default`)
 - `--help`: Show help information
+
+### Positional Arguments vs Options
+
+Parameters can be provided in two ways:
+
+1. **As positional arguments** (in the order they're defined in `params`)
+2. **As named options** using `--param-name value`
+3. **Mixed** - combine both styles
+
+When a parameter is provided as an option, it's excluded from positional argument mapping.
+
+**Examples:**
+
+```bash
+# Given params: [name, email, role]
+
+# All positional (in order)
+req create-user "John Doe" "john@example.com" "admin"
+# Result: name=John Doe, email=john@example.com, role=admin
+
+# All options
+req create-user --name "John Doe" --email "john@example.com" --role "admin"
+
+# Mixed: option for email, positional for the rest
+req create-user "John Doe" --email "john@example.com" "admin"
+# Result: name=John Doe (1st positional), email=john@example.com (option), role=admin (2nd positional)
+
+# Mixed: option for middle parameter
+req create-user "John Doe" "admin" --email "john@example.com"
+# Result: name=John Doe (1st positional), email=john@example.com (option), role=admin (2nd positional)
+```
 
 ### Configuration File Structure
 

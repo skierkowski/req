@@ -54,20 +54,43 @@ const createCommands = (configFile) => {
       parameters.push(commandConfig.param);
     }
 
+    // Add variadic positional arguments to support positional parameter values
+    if (parameters.length > 0) {
+      command.argument(
+        '[args...]',
+        'Positional arguments for parameters (in order of params definition)'
+      );
+    }
+
     parameters.forEach((param) => {
       command.option(`--${param} <value>`, `${param} parameter`);
     });
 
     // Add action handler
-    command.action(async (options) => {
+    command.action(async (positionalArgs, options) => {
       const cliParams = {};
 
-      // Collect all parameters
+      // First, collect parameters provided as options
+      const optionsProvided = new Set();
       parameters.forEach((param) => {
         if (options[param]) {
           cliParams[param] = options[param];
+          optionsProvided.add(param);
         }
       });
+
+      // Then, map positional arguments to parameters not provided as options
+      const positionalParams = parameters.filter(
+        (param) => !optionsProvided.has(param)
+      );
+
+      if (positionalArgs && positionalArgs.length > 0) {
+        positionalArgs.forEach((argValue, index) => {
+          if (index < positionalParams.length) {
+            cliParams[positionalParams[index]] = argValue;
+          }
+        });
+      }
 
       // Get global options from parent command
       const parentOptions = command.parent.opts();
