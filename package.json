@@ -1,19 +1,19 @@
 {
   "name": "@skierkowski/req",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "src/index.js",
   "bin": "./src/index.js",
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
+    "start": "node ./src/index.js",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
   "dependencies": {
-    "commander": "^14.0.0",
-    "dotenv": "^17.2.0",
-    "yaml": "^2.8.0",
+    "commander": "^14.0.1",
+    "dotenv": "^17.2.3",
+    "yaml": "^2.8.1",
     "mustache": "^4.2.0",
     "jsonpath-plus": "^10.3.0"
   },

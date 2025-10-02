@@ -93,6 +93,13 @@ req [options] <command> [command-options]
 ### Configuration File Structure
 
 ```yaml
+# Global configuration (optional)
+config:
+  dotEnv:
+    path: '.env.local' # Custom .env file path
+    encoding: 'utf8' # File encoding (optional)
+    override: false # Whether to override existing env vars (optional)
+
 # Command definitions
 command-name:
   url: 'https://api.example.com/endpoint'
@@ -238,6 +245,47 @@ req get-issue --issue_number 42
 ```
 
 ## 🔧 Advanced Features
+
+### Environment Variables and .env Files
+
+By default, `req` automatically loads environment variables from a `.env` file in your current directory. You can customize this behavior using the `config.dotEnv` section in your `req.yaml` file:
+
+```yaml
+# req.yaml
+config:
+  dotEnv:
+    path: '.env.production' # Load from a custom .env file
+    encoding: 'utf8' # File encoding (default: utf8)
+    override: false # Don't override existing env vars (default: false)
+
+# Your commands here...
+```
+
+The `config.dotEnv` object is passed directly to [dotenv.config()](https://github.com/motdotla/dotenv#config), so you can use any options supported by dotenv:
+
+- `path`: Path to the `.env` file (can be relative or absolute)
+- `encoding`: File encoding (default: `utf8`)
+- `override`: Override existing environment variables (default: `false`)
+- `debug`: Enable debug mode to troubleshoot loading issues (default: `false`)
+
+**Example with custom .env path:**
+
+```yaml
+# req.yaml
+config:
+  dotEnv:
+    path: 'config/.env.staging'
+
+stages:
+  default:
+    api_url: '{{API_URL}}' # Loaded from config/.env.staging
+    api_key: '{{API_KEY}}'
+
+api-request:
+  url: '{{api_url}}/endpoint'
+  headers:
+    Authorization: 'Bearer {{api_key}}'
+```
 
 ### Variable Precedence
 

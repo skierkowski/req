@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { loadReqFile } from './config/loader.js';
+import { loadReqFile, configFileExists } from './config/loader.js';
 import { executeCommand } from './commands/handler.js';
 
 const program = new Command();
@@ -18,13 +18,25 @@ const getConfigFile = () => {
   return 'req.yaml';
 };
 
+// Check if user is requesting help or version (should work without config file)
+const isHelpOrVersion = () => {
+  const args = process.argv.slice(2);
+  return (
+    args.length === 0 ||
+    args.includes('--help') ||
+    args.includes('-h') ||
+    args.includes('--version') ||
+    args.includes('-V')
+  );
+};
+
 // Load configuration and create commands dynamically
 const createCommands = (configFile) => {
   const config = loadReqFile(configFile);
 
   for (const [commandName, commandConfig] of Object.entries(config)) {
-    // Skip the stages section when creating commands
-    if (commandName === 'stages') {
+    // Skip the stages and config sections when creating commands
+    if (commandName === 'stages' || commandName === 'config') {
       continue;
     }
 
@@ -86,7 +98,22 @@ try {
   // Get config file from command line arguments
   const configFile = getConfigFile();
 
-  createCommands(configFile);
+  // Check if config file exists
+  const configExists = configFileExists(configFile);
+
+  if (configExists) {
+    // Load config and create commands
+    createCommands(configFile);
+  } else if (!isHelpOrVersion()) {
+    // Config file doesn't exist and user is trying to run a command
+    console.error(
+      `Error: Configuration file '${configFile}' not found.\n` +
+        `Please create a req.yaml file in the current directory or specify a config file with --config.\n` +
+        `Run 'req --help' for more information.`
+    );
+    process.exit(1);
+  }
+
   program.parse();
 } catch (error) {
   console.error(`Error: ${error.message}`);
