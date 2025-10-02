@@ -3,6 +3,17 @@
 import { Command } from 'commander';
 import { loadReqFile, configFileExists } from './config/loader.js';
 import { executeCommand } from './commands/handler.js';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+// Get package.json version
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const packageJson = JSON.parse(
+  readFileSync(join(__dirname, '../package.json'), 'utf8')
+);
+const version = packageJson.version;
 
 const program = new Command();
 
@@ -108,7 +119,7 @@ const createCommands = (configFile) => {
 program
   .name('req')
   .description('CLI tool for making HTTP requests based on YAML configuration')
-  .version('1.0.0')
+  .version(version)
   .option('-c, --config <file>', 'config file path', 'req.yaml')
   .option(
     '-v, --verbose',
